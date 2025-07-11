@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use MongoDB\Laravel\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class Multa extends Model
 {
-    protected $connection = 'mongodb';
-    protected $collection = 'Mult';
+    
+    protected $table = 'multas';
 
     protected $fillable = [
         'cantidad',        
@@ -17,5 +17,12 @@ class Multa extends Model
         'id_huesped',      
         'notificado_en',      
         'visualizado',
+        'estado', 
     ];
+
+    
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'id_huesped', 'id_huesped');
+    }
 }
