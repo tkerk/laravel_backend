@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Usuario extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'usuarios';
     protected $primaryKey = 'id_huesped';
@@ -16,19 +17,42 @@ class Usuario extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'passwordd',
+        'role',
     ];
 
     protected $hidden = [
-        'password',
+        'passwordd',
         'remember_token',
     ];
 
-    protected function casts(): array
+    
+    public function getPasswordAttribute()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->passwordd;
     }
+
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['passwordd'] = $value;
+    }
+
+    public function getAuthPassword()
+    {
+        return $this->passwordd;
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
+
+   
 }
